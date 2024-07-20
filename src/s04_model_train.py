@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import joblib
+import numpy as np
 import polars as pl
 from pathlib import Path
 from dataclasses import dataclass
@@ -16,11 +17,19 @@ from scipy.stats import (
     uniform as sci_uniform, 
     loguniform as sci_loguniform)
 
+
 if __name__ == '__main__':
+
+    from s01_generate_data import create_data_01_with_parameters
+
     from common import (
         write_list_to_text_file, 
         get_binary_classification_threshold_and_best_metric)
+
 else:
+
+    from src.s01_generate_data import create_data_01_with_parameters
+
     from src.common import (
         write_list_to_text_file, 
         get_binary_classification_threshold_and_best_metric)
@@ -32,6 +41,34 @@ class SplitData:
     train_y: pl.Series
     test_x: pl.DataFrame
     test_y: pl.Series
+
+
+def binarize_response_variable(
+    df: pl.DataFrame, y_colname: str) -> dict[str, pl.DataFrame]:
+    """
+    Binarize the response/outcome variable in 'df' by its quartiles, and return
+        resulting dataframes
+    """
+
+    quartile_str = ['25%', '50%', '75%']
+    quartile_df = (
+        df[y_colname]
+        .describe()
+        .filter(pl.col('statistic').is_in(quartile_str)))
+
+    dfs = {}
+    for q, q_value in quartile_df.iter_rows():
+
+        new_y_colname = 'y' + q[:2]
+        temp_df = df.with_columns(
+            pl.when(pl.col(y_colname).gt(q_value))
+            .then(1)
+            .otherwise(0)
+            .alias(new_y_colname)).drop(y_colname)
+
+        dfs.update({new_y_colname: temp_df})
+
+    return dfs
 
 
 def one_hot_encode_str_columns(df: pl.DataFrame) -> pl.DataFrame:
@@ -142,30 +179,24 @@ def main():
     pl.Config.set_tbl_rows(10)
     pl.Config.set_tbl_cols(16)
 
-    data_input_path = Path.cwd() / 'output'
-    data_input_filename = 'data03.parquet'
-    data_input_filepath = data_input_path / data_input_filename  
-
     output_path = Path.cwd() / 'output' / 'model'
     output_path.mkdir(exist_ok=True, parents=True)
+
+    mvn_components = create_data_01_with_parameters()
+
+    colnames = ['x' + str(i) for i in range(mvn_components.cases_data.shape[1])]
+    colnames[-1] = 'y0'
+    df = pl.DataFrame(mvn_components.cases_data)
+    df.columns = colnames
+    
+    dfs_dict = binarize_response_variable(df, colnames[-1])
 
 
     ##################################################
     # TRAIN AND SAVE MODELS
     ##################################################
-    # The response variable has several values which might be grouped together 
-    #   in several different ways that would make sense with respect to how to 
-    #   address the overall problem
-    # Train and save models for each of these variations to see if any of the
-    #   models have enough predictive power to be useful
-    ##################################################
 
-    original_y_colname = 'response_y'
-    df1 = prepare_data_for_modeling(data_input_filepath, original_y_colname)
-
-    df2_dict = regroup_binary_response_variable(df1, original_y_colname)
-
-    for new_y_colname, df2 in df2_dict.items():
+    for new_y_colname, df2 in dfs_dict.items():
 
         data_x_y = split_data_train_test(df2, new_y_colname, train_size=0.85)
 

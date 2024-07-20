@@ -11,22 +11,8 @@ CONDA_ACTIVATE = source $$(conda info --base)/etc/profile.d/conda.sh ; conda act
 
 step01:
 	$(CONDA_ACTIVATE) jupyter_data_processing02
-	python src/s01_clean_data.py
+	python src/s01_generate_data.py
 	conda deactivate
-
-step02:
-	$(CONDA_ACTIVATE) jupyter_data_processing02
-	python src/s02_recode_data.py
-	conda deactivate
-
-step02_all: step01 step02
-
-step03:
-	$(CONDA_ACTIVATE) jupyter_data_processing02
-	python src/s03_eda.py
-	conda deactivate
-
-step03_all: step02 step03
 
 step04:
 	$(CONDA_ACTIVATE) jupyter_data_processing02
