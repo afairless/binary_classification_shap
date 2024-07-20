@@ -14,25 +14,14 @@ step01:
 	python src/s01_generate_data.py
 	conda deactivate
 
-step04:
+step02:
 	$(CONDA_ACTIVATE) jupyter_data_processing02
-	python src/s04_model_train.py
+	python src/s02_model_train.py
 	conda deactivate
 
-step04_all: step03 step04
-
-step05:
+step03:
 	$(CONDA_ACTIVATE) jupyter_data_processing02
-	python src/s05_model_eval.py
+	python src/s03_model_eval.py
 	conda deactivate
 
-step05_all: step04 step05
-
-notebook:
-	$(CONDA_ACTIVATE) jupyter_data_processing02
-	cp -r output notebooks/output
-	jupytext --to notebook notebooks/*.py
-	conda deactivate
-
-notebook_all: step05 notebooks
-
+step03_all: step03 step02

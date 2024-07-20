@@ -1,7 +1,7 @@
  
 import polars as pl
 
-from src.s04_model_train import (
+from src.s02_model_train import (
     one_hot_encode_str_columns,
     )
 
