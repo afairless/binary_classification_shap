@@ -1,0 +1,14 @@
+[project]
+name = "project"
+version = "0.0.1"
+description = "A short description of the project."
+authors = [
+  { name = "name" },
+]
+
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    
+]
+requires-python = ">=3.7"

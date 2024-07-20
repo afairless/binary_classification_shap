@@ -1,0 +1,7 @@
+mamba create --name jupyter_data_processing02 polars pandas numpy scipy matplotlib requests pyarrow dask pytest hypothesis jupyter nbconvert scikit-learn statsmodels mlflow xgboost pytorch graphviz torchview seaborn
+
+conda activate jupyter_data_processing02
+
+mamba install -c conda-forge jupytext pandera shap
+
+mamba env export > environment.yml
