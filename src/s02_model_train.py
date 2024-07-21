@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 
 import joblib
-import numpy as np
 import polars as pl
 from pathlib import Path
 from dataclasses import dataclass
