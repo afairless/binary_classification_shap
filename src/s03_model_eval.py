@@ -589,9 +589,11 @@ def process_model_results(
         plot_hierarchical_cluster_dendrogram(shap_sample, output_filepath))
 
     # distance value 'max_d' determined from inspection of dendrogram
-    if model_idx == 1:
-        max_d = 0.66
-    elif model_idx == 3:
+    if model_idx == 25:
+        max_d = 2.5
+    elif model_idx == 50:
+        max_d = 3.2
+    elif model_idx == 75:
         max_d = 3.2
     else:
         raise ValueError(
@@ -638,7 +640,7 @@ def main():
 
     # input_path = Path.cwd() / 'input'
 
-    model_idxs = [1, 3]
+    model_idxs = [25, 50, 75]
 
     for idx in model_idxs:
 
@@ -649,16 +651,16 @@ def main():
         output_path = Path.cwd() / 'output' / f'model_eval_{idx}'
         output_path.mkdir(exist_ok=True, parents=True)
 
-        data_input_filename = f'data_{idx}_df.parquet'
+        data_input_filename = f'y{idx}_df.parquet'
         data_input_filepath = model_input_path / data_input_filename
 
-        train_data_input_filename = f'data_{idx}_train_df.parquet'
+        train_data_input_filename = f'y{idx}_train_df.parquet'
         train_data_input_filepath = model_input_path / train_data_input_filename
 
-        test_data_input_filename = f'data_{idx}_test_df.parquet'
+        test_data_input_filename = f'y{idx}_test_df.parquet'
         test_data_input_filepath = model_input_path / test_data_input_filename
 
-        model_input_filename = f'data_{idx}_model.pickle'
+        model_input_filename = f'y{idx}_model.pickle'
         model_input_filepath = model_input_path / model_input_filename
 
         process_model_results(

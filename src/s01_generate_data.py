@@ -205,7 +205,7 @@ def create_data_01_with_parameters() -> MultivariateNormalComponents:
     Create multivariate normal data with standard parameters
     """
 
-    cases_n = 1_000_000
+    cases_n = 10_000
     predictors_n = 10
     variables_n = predictors_n + 1
     noise_factor = 1
