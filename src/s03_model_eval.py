@@ -608,7 +608,7 @@ def process_model_results(
         shap_sample, cluster_linkage_matrix, max_d, perplexities, random_state, 
         output_filepath)
 
-    # plot the top 'feature_n' most imporatnt features
+    # plot the top 'feature_n' most important features
     feature_n = 7
     feature_srs = feature_importances_df.head(feature_n)['feature']
     for feature_name in feature_srs:
